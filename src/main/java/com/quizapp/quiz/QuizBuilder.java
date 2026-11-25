@@ -23,8 +23,12 @@ public class QuizBuilder {
     private static final int DEFAULT_POINTS = 1;
     private static final int MIN_OPTIONS = 2;
 
+    private Long creatorId;
     private String title;
     private String description;
+    private ScoringMode scoringMode = ScoringMode.WEIGHTED;
+    private Duration timeLimit;
+    private QuizStatus status = QuizStatus.DRAFT;
     private final List<QuestionDraft> questions = new ArrayList<>();
 
     public QuizBuilder title(String title) {
@@ -38,18 +42,22 @@ public class QuizBuilder {
     }
 
     public QuizBuilder creatorId(long creatorId) {
+        this.creatorId = creatorId;
         return this;
     }
 
     public QuizBuilder scoringMode(ScoringMode scoringMode) {
+        this.scoringMode = scoringMode;
         return this;
     }
 
     public QuizBuilder timeLimit(Duration timeLimit) {
+        this.timeLimit = timeLimit;
         return this;
     }
 
     public QuizBuilder status(QuizStatus status) {
+        this.status = status;
         return this;
     }
 
@@ -88,12 +96,14 @@ public class QuizBuilder {
         if (questions.isEmpty()) {
             throw new InvalidQuizException("Квіз повинен містити хоча б одне запитання");
         }
+        if (timeLimit != null && (timeLimit.isZero() || timeLimit.isNegative())) {
+            throw new InvalidQuizException("Обмеження часу має бути додатним");
+        }
         List<Question> built = new ArrayList<>();
         for (int i = 0; i < questions.size(); i++) {
             built.add(questions.get(i).build(i + 1));
         }
-        // TODO: налаштування квізу ще не зберігаються
-        return new Quiz(null, null, title.strip(), description, null, null, null, built);
+        return new Quiz(null, creatorId, title.strip(), description, scoringMode, timeLimit, status, built);
     }
 
     private QuestionDraft currentQuestion() {
