@@ -25,4 +25,8 @@ public record Quiz(Long id,
     public Quiz {
         questions = List.copyOf(questions);
     }
+
+    public boolean isPublished() {
+        return status == QuizStatus.PUBLISHED;
+    }
 }
