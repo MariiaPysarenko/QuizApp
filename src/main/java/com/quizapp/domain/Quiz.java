@@ -7,4 +7,8 @@ import java.util.List;
  * Створюється через {@link com.quizapp.quiz.QuizBuilder}, який перевіряє коректність даних.
  */
 public record Quiz(String title, String description, List<Question> questions) {
+
+    public Quiz {
+        questions = List.copyOf(questions);
+    }
 }
