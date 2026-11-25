@@ -11,11 +11,20 @@ import com.quizapp.domain.Question;
  */
 public record GivenAnswer(Question question, AnswerOption selected) {
 
+    public GivenAnswer {
+        if (question == null) {
+            throw new IllegalArgumentException("Запитання не може бути null");
+        }
+        if (selected != null && !question.options().contains(selected)) {
+            throw new IllegalArgumentException("Обраний варіант не належить до запитання");
+        }
+    }
+
     public boolean isSkipped() {
-        throw new UnsupportedOperationException("Ще не реалізовано");
+        return selected == null;
     }
 
     public boolean isCorrect() {
-        throw new UnsupportedOperationException("Ще не реалізовано");
+        return selected != null && selected.correct();
     }
 }

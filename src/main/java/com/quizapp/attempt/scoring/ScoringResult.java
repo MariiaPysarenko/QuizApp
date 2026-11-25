@@ -11,13 +11,22 @@ import java.util.List;
  */
 public record ScoringResult(List<QuestionResult> questions, double score, double maxScore) {
 
+    public ScoringResult {
+        questions = List.copyOf(questions);
+    }
+
     /** Відсоток від максимуму; 0, якщо запитань немає. */
     public double percent() {
-        throw new UnsupportedOperationException("Ще не реалізовано");
+        if (maxScore == 0) {
+            return 0;
+        }
+        return score / maxScore * 100;
     }
 
     /** Запитання з неправильною або пропущеною відповіддю — основа для роботи над помилками. */
     public List<QuestionResult> mistakes() {
-        throw new UnsupportedOperationException("Ще не реалізовано");
+        return questions.stream()
+                .filter(result -> !result.correct())
+                .toList();
     }
 }
