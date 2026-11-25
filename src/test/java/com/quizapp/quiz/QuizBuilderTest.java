@@ -3,8 +3,12 @@ package com.quizapp.quiz;
 import com.quizapp.domain.AnswerOption;
 import com.quizapp.domain.Question;
 import com.quizapp.domain.Quiz;
+import com.quizapp.domain.QuizStatus;
+import com.quizapp.domain.ScoringMode;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
+import java.time.Duration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -149,5 +153,49 @@ class QuizBuilderTest {
                 .isInstanceOf(UnsupportedOperationException.class);
         assertThatThrownBy(() -> quiz.questions().get(0).options().clear())
                 .isInstanceOf(UnsupportedOperationException.class);
+    }
+
+    @Test
+    @DisplayName("Новий квіз — чернетка зі звичайним оцінюванням і без обмеження часу")
+    void hasDefaultSettings() {
+        Quiz quiz = minimalQuiz().build();
+
+        assertThat(quiz.id()).isNull();
+        assertThat(quiz.creatorId()).isNull();
+        assertThat(quiz.status()).isEqualTo(QuizStatus.DRAFT);
+        assertThat(quiz.scoringMode()).isEqualTo(ScoringMode.WEIGHTED);
+        assertThat(quiz.timeLimit()).isNull();
+    }
+
+    @Test
+    @DisplayName("Зберігає автора, спосіб оцінювання, обмеження часу та статус")
+    void storesQuizSettings() {
+        Quiz quiz = minimalQuiz()
+                .creatorId(7)
+                .scoringMode(ScoringMode.PENALTY)
+                .timeLimit(Duration.ofMinutes(10))
+                .status(QuizStatus.PUBLISHED)
+                .build();
+
+        assertThat(quiz.creatorId()).isEqualTo(7L);
+        assertThat(quiz.scoringMode()).isEqualTo(ScoringMode.PENALTY);
+        assertThat(quiz.timeLimit()).isEqualTo(Duration.ofMinutes(10));
+        assertThat(quiz.status()).isEqualTo(QuizStatus.PUBLISHED);
+    }
+
+    @Test
+    @DisplayName("Обмеження часу має бути додатним")
+    void rejectsNonPositiveTimeLimit() {
+        QuizBuilder builder = minimalQuiz().timeLimit(Duration.ZERO);
+
+        assertThatThrownBy(builder::build)
+                .isInstanceOf(InvalidQuizException.class)
+                .hasMessageContaining("Обмеження часу");
+    }
+
+    private static QuizBuilder minimalQuiz() {
+        return new QuizBuilder()
+                .title("Квіз")
+                .question("2 + 2 = ?").correct("4").wrong("5");
     }
 }
