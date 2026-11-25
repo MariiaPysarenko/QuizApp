@@ -30,7 +30,7 @@ class GivenAnswerTest {
     @DisplayName("Не можна обрати варіант з іншого запитання")
     void rejectsOptionFromAnotherQuestion() {
         Question question = question(1);
-        AnswerOption foreignOption = new AnswerOption("чужий варіант", true);
+        AnswerOption foreignOption = new AnswerOption(null, "чужий варіант", true);
 
         assertThatThrownBy(() -> new GivenAnswer(question, foreignOption))
                 .isInstanceOf(IllegalArgumentException.class);

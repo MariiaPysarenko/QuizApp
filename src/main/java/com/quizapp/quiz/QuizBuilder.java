@@ -3,7 +3,10 @@ package com.quizapp.quiz;
 import com.quizapp.domain.AnswerOption;
 import com.quizapp.domain.Question;
 import com.quizapp.domain.Quiz;
+import com.quizapp.domain.QuizStatus;
+import com.quizapp.domain.ScoringMode;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,13 +37,29 @@ public class QuizBuilder {
         return this;
     }
 
+    public QuizBuilder creatorId(long creatorId) {
+        return this;
+    }
+
+    public QuizBuilder scoringMode(ScoringMode scoringMode) {
+        return this;
+    }
+
+    public QuizBuilder timeLimit(Duration timeLimit) {
+        return this;
+    }
+
+    public QuizBuilder status(QuizStatus status) {
+        return this;
+    }
+
     public QuizBuilder question(String text) {
         questions.add(new QuestionDraft(text));
         return this;
     }
 
     public QuizBuilder option(String text, boolean correct) {
-        currentQuestion().options.add(new AnswerOption(text, correct));
+        currentQuestion().options.add(new AnswerOption(null, text, correct));
         return this;
     }
 
@@ -73,7 +92,8 @@ public class QuizBuilder {
         for (int i = 0; i < questions.size(); i++) {
             built.add(questions.get(i).build(i + 1));
         }
-        return new Quiz(title.strip(), description, built);
+        // TODO: налаштування квізу ще не зберігаються
+        return new Quiz(null, null, title.strip(), description, null, null, null, built);
     }
 
     private QuestionDraft currentQuestion() {
@@ -115,7 +135,7 @@ public class QuizBuilder {
             if (correctCount != 1) {
                 throw invalid(number, "має бути рівно одна правильна відповідь, а знайдено " + correctCount);
             }
-            return new Question(text.strip(), points, explanation, options);
+            return new Question(null, text.strip(), points, explanation, options);
         }
 
         private static InvalidQuizException invalid(int number, String reason) {
