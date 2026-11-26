@@ -21,4 +21,8 @@ public record ImportResult(Quiz quiz, List<SkippedItem> skipped) {
     public int importedCount() {
         return quiz == null ? 0 : quiz.questions().size();
     }
+
+    public ImportResult withQuiz(Quiz savedQuiz) {
+        return new ImportResult(savedQuiz, skipped);
+    }
 }
