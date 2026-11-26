@@ -1,4 +1,4 @@
-package com.quizapp.attempt;
+package com.quizapp.testsupport;
 
 import java.time.Clock;
 import java.time.Duration;
@@ -9,15 +9,15 @@ import java.time.ZoneOffset;
 /**
  * Годинник для тестів, який можна «перемотувати» вперед.
  */
-final class TestClock extends Clock {
+public final class TestClock extends Clock {
 
     private Instant now;
 
-    TestClock(Instant start) {
+    public TestClock(Instant start) {
         this.now = start;
     }
 
-    void advance(Duration duration) {
+    public void advance(Duration duration) {
         now = now.plus(duration);
     }
 

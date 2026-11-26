@@ -30,6 +30,13 @@ public record Attempt(Long id,
                 now, null, 0, 0, List.of());
     }
 
+    /** Практика оцінюється одразу після надсилання, тому створюється вже завершеною. */
+    public static Attempt completedPractice(long userId, double score, double maxScore,
+                                            List<SubmittedAnswer> answers, Instant now) {
+        return new Attempt(null, userId, null, AttemptType.PRACTICE, AttemptStatus.COMPLETED,
+                now, now, score, maxScore, answers);
+    }
+
     public boolean belongsTo(long userId) {
         return this.userId == userId;
     }

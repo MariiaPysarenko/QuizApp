@@ -17,6 +17,7 @@ import com.quizapp.domain.SubmittedAnswer;
 import com.quizapp.persistence.memory.InMemoryAttemptRepository;
 import com.quizapp.persistence.memory.InMemoryQuizRepository;
 import com.quizapp.quiz.QuizBuilder;
+import com.quizapp.testsupport.TestClock;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

@@ -31,6 +31,14 @@ public class InMemoryQuizRepository implements QuizRepository {
         return Optional.ofNullable(quizzes.get(id));
     }
 
+    @Override
+    public Optional<Question> findQuestionById(long questionId) {
+        return quizzes.values().stream()
+                .flatMap(quiz -> quiz.questions().stream())
+                .filter(question -> question.id() == questionId)
+                .findFirst();
+    }
+
     private Quiz withGeneratedIds(Quiz quiz) {
         List<Question> questions = quiz.questions().stream()
                 .map(this::withGeneratedIds)

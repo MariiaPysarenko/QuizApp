@@ -2,7 +2,10 @@ package com.quizapp.persistence.memory;
 
 import com.quizapp.attempt.AttemptRepository;
 import com.quizapp.domain.Attempt;
+import com.quizapp.domain.AttemptStatus;
 
+import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -29,5 +32,14 @@ public class InMemoryAttemptRepository implements AttemptRepository {
     @Override
     public Optional<Attempt> findById(long id) {
         return Optional.ofNullable(attempts.get(id));
+    }
+
+    @Override
+    public List<Attempt> findCompletedByUser(long userId) {
+        return attempts.values().stream()
+                .filter(attempt -> attempt.userId() == userId)
+                .filter(attempt -> attempt.status() == AttemptStatus.COMPLETED)
+                .sorted(Comparator.comparing(Attempt::completedAt).thenComparing(Attempt::id))
+                .toList();
     }
 }

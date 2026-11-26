@@ -1,5 +1,6 @@
 package com.quizapp.quiz;
 
+import com.quizapp.domain.Question;
 import com.quizapp.domain.Quiz;
 
 import java.util.Optional;
@@ -15,4 +16,7 @@ public interface QuizRepository {
     Quiz save(Quiz quiz);
 
     Optional<Quiz> findById(long id);
+
+    /** Пошук запитання за id серед усіх квізів — потрібен для роботи над помилками. */
+    Optional<Question> findQuestionById(long questionId);
 }
