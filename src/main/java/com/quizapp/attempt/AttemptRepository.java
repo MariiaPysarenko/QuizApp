@@ -2,6 +2,7 @@ package com.quizapp.attempt;
 
 import com.quizapp.domain.Attempt;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -13,4 +14,7 @@ public interface AttemptRepository {
     Attempt save(Attempt attempt);
 
     Optional<Attempt> findById(long id);
+
+    /** Завершені спроби користувача (квізи й практика) у порядку завершення — від найстарішої. */
+    List<Attempt> findCompletedByUser(long userId);
 }
