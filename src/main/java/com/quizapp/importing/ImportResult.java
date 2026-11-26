@@ -10,11 +10,15 @@ import java.util.List;
  */
 public record ImportResult(Quiz quiz, List<SkippedItem> skipped) {
 
+    public ImportResult {
+        skipped = List.copyOf(skipped);
+    }
+
     public boolean hasQuiz() {
-        throw new UnsupportedOperationException("Ще не реалізовано");
+        return quiz != null;
     }
 
     public int importedCount() {
-        throw new UnsupportedOperationException("Ще не реалізовано");
+        return quiz == null ? 0 : quiz.questions().size();
     }
 }
