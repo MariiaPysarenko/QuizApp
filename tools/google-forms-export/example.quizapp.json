@@ -1,0 +1,49 @@
+{
+  "source": "google-forms",
+  "formId": "example-form",
+  "title": "Основи Java",
+  "description": "Контрольна з теми ООП",
+  "isQuiz": true,
+  "items": [
+    {
+      "type": "SECTION_HEADER",
+      "title": "Частина 1. Синтаксис"
+    },
+    {
+      "type": "MULTIPLE_CHOICE",
+      "title": "Який модифікатор робить поле видимим лише в класі?",
+      "points": 2,
+      "feedbackIncorrect": "Перегляньте тему інкапсуляції",
+      "choices": [
+        { "value": "public", "isCorrect": false },
+        { "value": "protected", "isCorrect": false },
+        { "value": "private", "isCorrect": true }
+      ]
+    },
+    {
+      "type": "LIST",
+      "title": "Що виконує байт-код Java?",
+      "points": 1,
+      "feedbackIncorrect": null,
+      "choices": [
+        { "value": "JVM", "isCorrect": true },
+        { "value": "javac", "isCorrect": false }
+      ]
+    },
+    {
+      "type": "CHECKBOX",
+      "title": "Оберіть примітивні типи",
+      "points": 2,
+      "feedbackIncorrect": null,
+      "choices": [
+        { "value": "int", "isCorrect": true },
+        { "value": "String", "isCorrect": false },
+        { "value": "boolean", "isCorrect": true }
+      ]
+    },
+    {
+      "type": "TEXT",
+      "title": "Ваше прізвище"
+    }
+  ]
+}
