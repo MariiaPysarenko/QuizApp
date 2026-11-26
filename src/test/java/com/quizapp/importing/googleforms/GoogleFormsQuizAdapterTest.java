@@ -67,7 +67,7 @@ class GoogleFormsQuizAdapterTest {
         GoogleFormExport.Item question = new GoogleFormExport.Item("MULTIPLE_CHOICE", "2 + 2 = ?", 3,
                 "Перевірте ще раз таблицю додавання", List.of(right("4"), wrong("5")));
 
-        Question imported = adapt(form("Квіз", question)).quiz().questions().get(0);
+        Question imported = adapt(GoogleFormsTestData.form("Квіз", question)).quiz().questions().get(0);
 
         assertThat(imported.points()).isEqualTo(3);
         assertThat(imported.explanation()).isEqualTo("Перевірте ще раз таблицю додавання");
