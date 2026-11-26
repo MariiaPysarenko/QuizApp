@@ -1,5 +1,7 @@
 package com.quizapp.attempt.scoring;
 
+import com.quizapp.domain.SubmittedAnswer;
+
 import java.util.List;
 
 /**
@@ -27,6 +29,16 @@ public record ScoringResult(List<QuestionResult> questions, double score, double
     public List<QuestionResult> mistakes() {
         return questions.stream()
                 .filter(result -> !result.correct())
+                .toList();
+    }
+
+    /** Відповіді у вигляді для збереження в спробі. */
+    public List<SubmittedAnswer> toSubmittedAnswers() {
+        return questions.stream()
+                .map(result -> new SubmittedAnswer(
+                        result.question().id(),
+                        result.selected() == null ? null : result.selected().id(),
+                        result.correct()))
                 .toList();
     }
 }

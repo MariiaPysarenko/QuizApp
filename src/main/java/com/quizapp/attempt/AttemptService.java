@@ -11,7 +11,6 @@ import com.quizapp.domain.AnswerOption;
 import com.quizapp.domain.Attempt;
 import com.quizapp.domain.Question;
 import com.quizapp.domain.Quiz;
-import com.quizapp.domain.SubmittedAnswer;
 import com.quizapp.quiz.QuizRepository;
 
 import java.time.Clock;
@@ -20,7 +19,6 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -78,13 +76,7 @@ public class AttemptService {
         List<GivenAnswer> givenAnswers = toGivenAnswers(quiz, selectedOptions);
         ScoringResult result = ScoringStrategies.forMode(quiz.scoringMode()).score(givenAnswers);
 
-        List<SubmittedAnswer> submitted = result.questions().stream()
-                .map(r -> new SubmittedAnswer(
-                        r.question().id(),
-                        r.selected() == null ? null : r.selected().id(),
-                        r.correct()))
-                .toList();
-        attempts.save(attempt.complete(result.score(), result.maxScore(), submitted, now));
+        attempts.save(attempt.complete(result.score(), result.maxScore(), result.toSubmittedAnswers(), now));
         return result;
     }
 
@@ -116,9 +108,7 @@ public class AttemptService {
     }
 
     private static AnswerOption findOption(Question question, Long optionId) {
-        return question.options().stream()
-                .filter(option -> Objects.equals(option.id(), optionId))
-                .findFirst()
+        return question.findOption(optionId)
                 .orElseThrow(() -> new ValidationException(
                         "Варіант " + optionId + " не належить до запитання " + question.id()));
     }

@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -66,14 +65,8 @@ public class PracticeService {
         }
 
         ScoringResult result = ScoringStrategies.forMode(ScoringMode.WEIGHTED).score(givenAnswers);
-        List<SubmittedAnswer> submitted = result.questions().stream()
-                .map(r -> new SubmittedAnswer(
-                        r.question().id(),
-                        r.selected() == null ? null : r.selected().id(),
-                        r.correct()))
-                .toList();
         attempts.save(Attempt.completedPractice(studentId, result.score(), result.maxScore(),
-                submitted, clock.instant()));
+                result.toSubmittedAnswers(), clock.instant()));
         return result;
     }
 
@@ -90,9 +83,7 @@ public class PracticeService {
     }
 
     private static AnswerOption findOption(Question question, Long optionId) {
-        return question.options().stream()
-                .filter(option -> Objects.equals(option.id(), optionId))
-                .findFirst()
+        return question.findOption(optionId)
                 .orElseThrow(() -> new ValidationException(
                         "Варіант " + optionId + " не належить до запитання " + question.id()));
     }
