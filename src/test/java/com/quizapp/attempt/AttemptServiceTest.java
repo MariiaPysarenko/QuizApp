@@ -185,6 +185,26 @@ class AttemptServiceTest {
                 .isInstanceOf(ValidationException.class);
     }
 
+    // ---------- history ----------
+
+    @Test
+    @DisplayName("Історія містить лише завершені спроби студента в порядку завершення")
+    void historyContainsCompletedAttemptsInOrder() {
+        Quiz quiz = savePublishedQuiz(new QuizBuilder());
+        Attempt first = service.start(STUDENT, quiz.id());
+        service.submit(STUDENT, first.id(), Map.of());
+        clock.advance(Duration.ofMinutes(1));
+        Attempt second = service.start(STUDENT, quiz.id());
+        service.submit(STUDENT, second.id(), Map.of());
+        service.start(STUDENT, quiz.id());
+        Attempt other = service.start(OTHER_STUDENT, quiz.id());
+        service.submit(OTHER_STUDENT, other.id(), Map.of());
+
+        assertThat(service.history(STUDENT))
+                .extracting(Attempt::id)
+                .containsExactly(first.id(), second.id());
+    }
+
     // ---------- time limit ----------
 
     @Test

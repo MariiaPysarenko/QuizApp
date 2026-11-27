@@ -43,6 +43,11 @@ public class AttemptService {
         this.clock = clock;
     }
 
+    /** Завершені спроби студента (квізи й практика) у порядку завершення. */
+    public List<Attempt> history(long studentId) {
+        return attempts.findCompletedByUser(studentId);
+    }
+
     public Attempt start(long studentId, long quizId) {
         Quiz quiz = quizzes.findById(quizId)
                 .filter(Quiz::isPublished)
