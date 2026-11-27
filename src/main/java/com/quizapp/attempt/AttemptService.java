@@ -43,6 +43,11 @@ public class AttemptService {
         this.clock = clock;
     }
 
+    /** Завершені спроби студента (квізи й практика) у порядку завершення. */
+    public List<Attempt> history(long studentId) {
+        throw new UnsupportedOperationException("Ще не реалізовано");
+    }
+
     public Attempt start(long studentId, long quizId) {
         Quiz quiz = quizzes.findById(quizId)
                 .filter(Quiz::isPublished)
