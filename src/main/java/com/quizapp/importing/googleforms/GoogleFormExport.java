@@ -1,5 +1,7 @@
 package com.quizapp.importing.googleforms;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.List;
 
 /**
@@ -10,7 +12,7 @@ public record GoogleFormExport(String source,
                                String formId,
                                String title,
                                String description,
-                               boolean isQuiz,
+                               @JsonProperty("isQuiz") boolean isQuiz,
                                List<Item> items) {
 
     /**
@@ -27,6 +29,7 @@ public record GoogleFormExport(String source,
                        List<Choice> choices) {
     }
 
-    public record Choice(String value, boolean isCorrect) {
+    /** Назви з префіксом {@code is} задано явно, щоб Jackson не перетворив їх на {@code quiz}/{@code correct}. */
+    public record Choice(String value, @JsonProperty("isCorrect") boolean isCorrect) {
     }
 }
