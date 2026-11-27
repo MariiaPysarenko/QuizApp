@@ -5,6 +5,7 @@ import com.quizapp.domain.Question;
 import com.quizapp.domain.Quiz;
 import com.quizapp.quiz.QuizRepository;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -29,6 +30,13 @@ public class InMemoryQuizRepository implements QuizRepository {
     @Override
     public Optional<Quiz> findById(long id) {
         return Optional.ofNullable(quizzes.get(id));
+    }
+
+    @Override
+    public List<Quiz> findAll() {
+        return quizzes.values().stream()
+                .sorted(Comparator.comparing(Quiz::id))
+                .toList();
     }
 
     @Override
