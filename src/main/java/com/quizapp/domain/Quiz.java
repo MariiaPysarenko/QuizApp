@@ -29,4 +29,12 @@ public record Quiz(Long id,
     public boolean isPublished() {
         return status == QuizStatus.PUBLISHED;
     }
+
+    public boolean isCreatedBy(long userId) {
+        return creatorId != null && creatorId == userId;
+    }
+
+    public Quiz withStatus(QuizStatus newStatus) {
+        return new Quiz(id, creatorId, title, description, scoringMode, timeLimit, newStatus, questions);
+    }
 }
