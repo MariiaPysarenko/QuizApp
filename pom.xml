@@ -20,6 +20,7 @@
         <assertj.version>3.27.3</assertj.version>
         <tomcat.version>10.1.34</tomcat.version>
         <jackson.version>2.18.2</jackson.version>
+        <postgresql.version>42.7.4</postgresql.version>
     </properties>
 
     <dependencies>
@@ -39,6 +40,13 @@
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jsr310</artifactId>
             <version>${jackson.version}</version>
+        </dependency>
+        <!-- PostgreSQL: JDBC-драйвер потрібен лише під час виконання, код працює з java.sql -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>${postgresql.version}</version>
+            <scope>runtime</scope>
         </dependency>
 
         <!-- Тести -->
