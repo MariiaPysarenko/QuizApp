@@ -1,6 +1,12 @@
 package com.quizapp;
 
+import com.quizapp.auth.PasswordHasher;
 import com.quizapp.auth.Pbkdf2PasswordHasher;
+import com.quizapp.persistence.jdbc.Database;
+import com.quizapp.persistence.jdbc.JdbcAttemptRepository;
+import com.quizapp.persistence.jdbc.JdbcQuizRepository;
+import com.quizapp.persistence.jdbc.JdbcUserRepository;
+import com.quizapp.persistence.jdbc.SchemaInitializer;
 import com.quizapp.web.QuizApp;
 import com.quizapp.web.http.ApiServlet;
 import com.quizapp.web.http.JsonMapper;
@@ -13,6 +19,7 @@ import java.time.Clock;
 
 /**
  * Запуск Quiz App: вбудований Tomcat з одним сервлетом для {@code /api/*}.
+ * Якщо задано DB_URL — дані в PostgreSQL, інакше — у пам'яті.
  */
 public final class Main {
 
@@ -21,7 +28,7 @@ public final class Main {
 
     public static void main(String[] args) throws Exception {
         AppConfig config = AppConfig.fromEnvironment();
-        QuizApp app = QuizApp.inMemory(new Pbkdf2PasswordHasher(), config.teacherInviteCode(), Clock.systemUTC());
+        QuizApp app = createApp(config);
 
         Path workDir = Files.createTempDirectory("quizapp-tomcat");
         Tomcat tomcat = new Tomcat();
@@ -38,7 +45,20 @@ public final class Main {
         if (config.teacherInviteCode() == null || config.teacherInviteCode().isBlank()) {
             System.out.println("Увага: TEACHER_INVITE_CODE не задано — реєстрацію викладачів вимкнено.");
         }
-        System.out.println("Дані зберігаються в пам'яті й зникнуть після зупинки сервера.");
         tomcat.getServer().await();
+    }
+
+    private static QuizApp createApp(AppConfig config) {
+        PasswordHasher hasher = new Pbkdf2PasswordHasher();
+        Clock clock = Clock.systemUTC();
+        if (!config.usesDatabase()) {
+            System.out.println("Дані зберігаються в пам'яті й зникнуть після зупинки сервера (DB_URL не задано).");
+            return QuizApp.inMemory(hasher, config.teacherInviteCode(), clock);
+        }
+        Database database = new Database(config.dbUrl(), config.dbUser(), config.dbPassword());
+        new SchemaInitializer(database).run();
+        System.out.println("Дані зберігаються в PostgreSQL: " + config.dbUrl());
+        return QuizApp.create(new JdbcQuizRepository(database), new JdbcAttemptRepository(database),
+                new JdbcUserRepository(database), hasher, config.teacherInviteCode(), clock);
     }
 }
