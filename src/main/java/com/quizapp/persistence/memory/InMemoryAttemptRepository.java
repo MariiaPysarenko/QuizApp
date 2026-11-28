@@ -1,6 +1,7 @@
 package com.quizapp.persistence.memory;
 
 import com.quizapp.attempt.AttemptRepository;
+import com.quizapp.common.ConflictException;
 import com.quizapp.domain.Attempt;
 import com.quizapp.domain.AttemptStatus;
 
@@ -19,14 +20,27 @@ public class InMemoryAttemptRepository implements AttemptRepository {
     private final Map<Long, Attempt> attempts = new ConcurrentHashMap<>();
     private final AtomicLong sequence = new AtomicLong();
 
+    /**
+     * Нова спроба отримує id. Оновити можна лише спробу зі статусом IN_PROGRESS —
+     * так само, як у JDBC-реалізації; перевірка й запис атомарні завдяки {@code compute}.
+     */
     @Override
     public Attempt save(Attempt attempt) {
-        Attempt stored = attempt.id() != null ? attempt : new Attempt(
-                sequence.incrementAndGet(), attempt.userId(), attempt.quizId(), attempt.type(),
-                attempt.status(), attempt.startedAt(), attempt.completedAt(),
-                attempt.score(), attempt.maxScore(), attempt.answers());
-        attempts.put(stored.id(), stored);
-        return stored;
+        if (attempt.id() == null) {
+            Attempt stored = new Attempt(
+                    sequence.incrementAndGet(), attempt.userId(), attempt.quizId(), attempt.type(),
+                    attempt.status(), attempt.startedAt(), attempt.completedAt(),
+                    attempt.score(), attempt.maxScore(), attempt.answers());
+            attempts.put(stored.id(), stored);
+            return stored;
+        }
+        attempts.compute(attempt.id(), (id, existing) -> {
+            if (existing != null && existing.status() != AttemptStatus.IN_PROGRESS) {
+                throw new ConflictException("Спроба вже завершена");
+            }
+            return attempt;
+        });
+        return attempt;
     }
 
     @Override
